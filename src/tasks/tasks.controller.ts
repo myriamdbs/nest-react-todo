@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Res } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { TasksService } from './tasks.service';
 import { Task } from './interfaces/task.interface';
@@ -7,9 +7,13 @@ import { Task } from './interfaces/task.interface';
 export class TasksController {
   constructor(private TasksService: TasksService) {}
 
-  @Post()
-  async create(@Body() createTaskDto: CreateTaskDto) {
-    this.TasksService.create(createTaskDto);
+  @Post('/task')
+  async create(@Res() res, @Body() createTaskDto: CreateTaskDto) {
+    const newTask = await this.TasksService.create(createTaskDto);
+    return res.status(HttpStatus.OK).json({
+      message: 'Post has been submitted successfully!',
+      task: newTask,
+    });
   }
 
   @Get()
